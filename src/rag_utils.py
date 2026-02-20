@@ -1,5 +1,4 @@
 import time
-from dotenv import load_dotenv
 from conc_workflow import ConcurrentWorkflow
 from llama_index.core import (
     SimpleDirectoryReader,
@@ -11,10 +10,8 @@ from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
 
-load_dotenv()
 
-
-def add_context(filenames: [str], prompt: str, llm) -> str:
+def get_context(filenames: [str], prompt: str, llm) -> str:
     documents = SimpleDirectoryReader(input_files=filenames).load_data()
     print("Starting document embedding into VectorStoreIndex.")
     start = time.perf_counter()
@@ -50,7 +47,7 @@ def add_context(filenames: [str], prompt: str, llm) -> str:
     return str(response)
 
 
-async def get_context(prompt: str) -> str:
+async def add_context(prompt: str) -> str:
     cwf = ConcurrentWorkflow(
             prompt=prompt,
             timeout=None
@@ -64,7 +61,7 @@ async def get_context(prompt: str) -> str:
         {end - start:.2f} seconds.")
 
     if result[0][0] != "No Relevant Results":
-        additional_context = add_context(
+        additional_context = get_context(
             result[0],
             prompt,
             get_ollama_llm()

@@ -45,7 +45,7 @@ class ConcurrentWorkflow(Workflow):
 
     @step
     async def start(self, ctx: Context, ev: StartEvent) -> ProcessEvent:
-        data_list = ConcurrentWorkflow.get_filenames('../data/')
+        data_list = ConcurrentWorkflow.get_filenames('data/')
         await ctx.store.set("num_to_collect", len(data_list))
         for item in data_list:
             print(f"Sending {item} to ProcessEvent")
@@ -53,10 +53,8 @@ class ConcurrentWorkflow(Workflow):
                 ProcessEvent(filename=item)
             )
         return None
-    # Set num_workers at least 2x less than the amount of files
-    # This will allow an easy demonstration of concurrency
 
-    @step(num_workers=3,
+    @step(num_workers=2,
           retry_policy=ConstantDelayRetryPolicy(delay=2, maximum_attempts=3)
           )
     async def process_data(self, ev: ProcessEvent) -> ResultEvent:
