@@ -23,7 +23,7 @@ LLM_MODEL = [
 ]
 
 # Control whether the RAG loop is used
-RAG_ENABLED = True
+RAG_ENABLED = False
 
 SYSTEM_PROMPT = """
 You are an expert in government rules, codes, and regulations.

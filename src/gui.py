@@ -1,8 +1,7 @@
 import asyncio
 from typing import Optional
-
+import time
 from nicegui import ui
-
 import report
 
 
@@ -37,6 +36,8 @@ def create_page() -> None:
 
     error_label = ui.label("").style("color: red")
 
+    generating_label = ui.label("").style("color: gray")
+
     generate_button = ui.button("Generate report")
 
     result_markdown = ui.markdown("")
@@ -63,19 +64,25 @@ def create_page() -> None:
             return
 
         generate_button.disable()
-        result_markdown.set_content("Generating report...")
-        await asyncio.sleep(0)  # Yield so the "Generating report..." update is sent
+        generating_label.text = "Generating report..."
+        # Yield so the "Generating report..." update is sent
+        await asyncio.sleep(0)
 
         try:
             report.RAG_ENABLED = bool(rag_toggle.value)
+            print("Starting report generation from the UI.")
+            start = time.perf_counter()
             output_table = await report.create_report(prompt, model)
-
+            end = time.perf_counter()
+            print(f"Report generation time from the UI: \
+                {end - start:.2f} seconds.")
             if not output_table:
                 error_label.text = "The model returned an empty response."
                 result_markdown.set_content("")
             else:
                 result_markdown.set_content(output_table)
-                await asyncio.sleep(0)  # Yield so the table update is sent to the client
+                # Yield so the table update is sent to the client
+                await asyncio.sleep(0)
         except Exception:
             error_label.text = (
                 "An error occurred while generating the report. "
@@ -83,6 +90,7 @@ def create_page() -> None:
             )
             result_markdown.set_content("")
         finally:
+            generating_label.text = ""
             generate_button.enable()
 
     generate_button.on("click", handle_generate)
