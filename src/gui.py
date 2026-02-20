@@ -37,9 +37,9 @@ def create_page() -> None:
 
     error_label = ui.label("").style("color: red")
 
-    result_markdown = ui.markdown("")
-
     generate_button = ui.button("Generate report")
+
+    result_markdown = ui.markdown("")
 
     async def handle_generate() -> None:
         """Handle clicks on the Generate report button."""

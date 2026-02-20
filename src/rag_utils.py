@@ -1,3 +1,4 @@
+import asyncio
 import time
 from conc_workflow import ConcurrentWorkflow
 from llama_index.core import (
@@ -69,11 +70,16 @@ async def add_context(prompt: str) -> str:
         {end - start:.2f} seconds.")
 
     if result[0][0] != "No Relevant Results":
-        additional_context = get_context(
+        # Run blocking get_context in a thread
+        # so the event loop stays responsive.
+        additional_context = await asyncio.to_thread(
+            get_context,
             result[0],
             prompt,
-            get_ollama_llm()
-            )
+            get_ollama_llm(),
+        )
+    else:
+        additional_context = " "
     print(f"RAG loop results:\n {additional_context}")
     return additional_context
 
