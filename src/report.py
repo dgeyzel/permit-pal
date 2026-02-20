@@ -1,3 +1,4 @@
+import asyncio
 import time
 import rag_utils
 from dotenv import load_dotenv
@@ -86,7 +87,9 @@ async def gemini_report(input_prompt: str, gemini_model: str) -> str:
     ]
     print(f"Starting main {gemini_model} model execution.")
     start = time.perf_counter()
-    ai_msg = gemini_ai_model.invoke(messages)
+    # Run blocking invoke in a thread so the event loop stays responsive
+    # (keeps NiceGUI WebSocket alive during long LLM calls).
+    ai_msg = await asyncio.to_thread(gemini_ai_model.invoke, messages)
     end = time.perf_counter()
     print(f"Main {gemini_model} model execution time : \
         {end - start:.2f} seconds.")

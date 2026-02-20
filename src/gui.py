@@ -1,3 +1,4 @@
+import asyncio
 from typing import Optional
 
 from nicegui import ui
@@ -20,8 +21,7 @@ def create_page() -> None:
 
     prompt_input = ui.textarea(
         label="Describe what you want to accomplish and where",
-        placeholder="I want to open a restaurant in Atlanta, Georgia.",
-        auto_rows=True,
+        placeholder="I want to open a restaurant in Atlanta, Georgia."
     ).classes("w-full")
 
     default_model: Optional[str] = (
@@ -44,7 +44,7 @@ def create_page() -> None:
     async def handle_generate() -> None:
         """Handle clicks on the Generate report button."""
         error_label.text = ""
-        result_markdown.content = ""
+        result_markdown.set_content("")
 
         prompt = (prompt_input.value or "").strip()
         if not prompt:
@@ -63,7 +63,8 @@ def create_page() -> None:
             return
 
         generate_button.disable()
-        result_markdown.content = "Generating report..."
+        result_markdown.set_content("Generating report...")
+        await asyncio.sleep(0)  # Yield so the "Generating report..." update is sent
 
         try:
             report.RAG_ENABLED = bool(rag_toggle.value)
@@ -71,15 +72,16 @@ def create_page() -> None:
 
             if not output_table:
                 error_label.text = "The model returned an empty response."
-                result_markdown.content = ""
+                result_markdown.set_content("")
             else:
-                result_markdown.content = output_table
+                result_markdown.set_content(output_table)
+                await asyncio.sleep(0)  # Yield so the table update is sent to the client
         except Exception:
             error_label.text = (
                 "An error occurred while generating the report. "
                 "Please check your configuration and try again."
             )
-            result_markdown.content = ""
+            result_markdown.set_content("")
         finally:
             generate_button.enable()
 
