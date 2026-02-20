@@ -14,7 +14,11 @@ LLM_MODEL = [
     'gemini-2.5-flash',
     'gemini-2.5-flash-lite',
     'gemini-3-pro-preview',
-    'gemini-3-flash-preview'
+    'gemini-3-flash-preview',
+    'phi4-mini',
+    'qwen2.5:3b-instruct',
+    'deepseek-r1:1.5b',
+    'llama3.2:3b'
 ]
 
 # Control whether the RAG loop is used
@@ -60,6 +64,11 @@ CONTEXT:
 
 
 async def gemini_report(input_prompt: str, gemini_model: str) -> str:
+    """Sends the input prompt to a Google Gemini LLM model.
+    If RAG is enabled, calls add_context from rag_utils to \
+        get additional info from the RAG corpus.
+    Returns a string that contains the generated report formatted in Markdown.
+    """
     additional_context = " "
     if RAG_ENABLED:
         additional_context = await rag_utils.add_context(input_prompt)
@@ -91,6 +100,10 @@ async def gemini_report(input_prompt: str, gemini_model: str) -> str:
 
 
 async def create_report(input_prompt: str, model_name: str) -> str:
+    """Wrapper for functions that generate the report.
+    Different functions are called to use different LLMs \
+        based on the model that is being used.
+    """
     output = ""
     if model_name.startswith('gemini'):
         output = await gemini_report(input_prompt, model_name)

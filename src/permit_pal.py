@@ -13,6 +13,8 @@ TEST_PROMPT = [
 
 
 async def test_run(prompt: str, llm_model: str, rag_enabled):
+    """Function for doing tests of the application logic in main()
+    """
     report.RAG_ENABLED = rag_enabled
     output_table = await report.create_report(prompt, llm_model)
     print("Final Report Output:\n" + output_table)

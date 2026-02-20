@@ -9,6 +9,10 @@ load_dotenv()
 
 
 async def rel_check(prompt: str, file_name: str) -> dict[str, str]:
+    """Function to determine whether the contents of a given file \
+       are relevant to the question in the input prompt.
+       The prompt and file are sent to an LLM, which determines relevancy.
+    """
     MODEL = []
     MODEL.append("gemini-3-flash-preview")
     SYSTEM_PROMPT = """

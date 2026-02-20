@@ -12,6 +12,10 @@ from llama_index.llms.ollama import Ollama
 
 
 def get_context(filenames: [str], prompt: str, llm) -> str:
+    """Takes a list of files, and embeds them into a vectorstore.
+    An LLM synthesizes a response \
+        from the chunks with top similarity to the prompt.
+    """
     documents = SimpleDirectoryReader(input_files=filenames).load_data()
     print("Starting document embedding into VectorStoreIndex.")
     start = time.perf_counter()
@@ -48,6 +52,10 @@ def get_context(filenames: [str], prompt: str, llm) -> str:
 
 
 async def add_context(prompt: str) -> str:
+    """Runs the ConcurrentWorkflow to get a list of relevant files.
+    Passes the files into get_context \
+        to output the generated additional context from the files.
+    """
     cwf = ConcurrentWorkflow(
             prompt=prompt,
             timeout=None
@@ -71,6 +79,10 @@ async def add_context(prompt: str) -> str:
 
 
 def get_ollama_llm(model='phi4-mini'):
+    """Helper function that returns an LLM model.
+    Called in add_context.
+    Passed into get_context. used in get_response_synthesizer.
+    """
     ollama_llm = Ollama(
         model=model,
         temperature=0.1,

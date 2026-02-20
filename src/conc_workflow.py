@@ -13,14 +13,22 @@ from llama_index.core.workflow import (
 
 
 class ProcessEvent(Event):
+    """Contains context for concurrent execution of relevancy checking.
+    filename is an input, the file the given worker will operate on.
+    """
     filename: str
 
 
 class ResultEvent(Event):
+    """Contains the combined context of all executed work.
+    Result is an output, the combined work from all the workers.
+    """
     result: dict[str, str]
 
 
 class ConcurrentWorkflow(Workflow):
+    """Class to execute a task multiple times concurrently.
+    """
     def __init__(self, prompt: str, *args, **kwargs):
         self.prompt = prompt
         super().__init__(*args, **kwargs)
@@ -45,6 +53,10 @@ class ConcurrentWorkflow(Workflow):
 
     @step
     async def start(self, ctx: Context, ev: StartEvent) -> ProcessEvent:
+        """Creates the shared context store.
+        Gets a list of files in a directory.
+        Sends each file to a ProcessEvent.
+        """
         data_list = ConcurrentWorkflow.get_filenames('data/')
         await ctx.store.set("num_to_collect", len(data_list))
         for item in data_list:
@@ -58,6 +70,10 @@ class ConcurrentWorkflow(Workflow):
           retry_policy=ConstantDelayRetryPolicy(delay=2, maximum_attempts=3)
           )
     async def process_data(self, ev: ProcessEvent) -> ResultEvent:
+        """Defines multiple workers running asychronously.
+        Each worker calls the rel_check function \
+        on the file defined in its input ProcessEvent.
+        """
         print(f"Starting relevancy check on {ev.filename}")
         start = time.perf_counter()
         # Asynchronously performs relevancy check operation
@@ -75,6 +91,9 @@ class ConcurrentWorkflow(Workflow):
         ctx: Context,
         ev: ResultEvent
     ) -> StopEvent | None:
+        """Combines all of the results in the combined context.
+        The result is seperated into 2 lists of strings based on content.
+        """
         num_to_collect = await ctx.store.get("num_to_collect")
         # Combines outputs from the process_data() calls into 1 return value
         results = ctx.collect_events(ev, [ResultEvent] * num_to_collect)
