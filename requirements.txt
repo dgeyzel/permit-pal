@@ -78,7 +78,9 @@ langgraph-prebuilt==1.0.7
 langgraph-sdk==0.3.6
 langsmith==0.7.3
 llama-index-core==0.14.15
+llama-index-embeddings-huggingface==0.6.1
 llama-index-instrumentation==0.4.2
+llama-index-llms-ollama==0.9.1
 llama-index-utils-workflow==0.9.2
 llama-index-workflows==2.14.2
 markdown-it-py==4.0.0
@@ -95,6 +97,7 @@ networkx==3.6.1
 nltk==3.9.2
 numpy==2.4.2
 oauthlib==3.3.1
+ollama==0.6.1
 onnxruntime==1.24.1
 openai==2.21.0
 opentelemetry-api==1.39.1
@@ -139,6 +142,10 @@ requests-toolbelt==1.0.0
 rich==14.3.2
 rpds-py==0.30.0
 rsa==4.9.1
+safetensors==0.7.0
+scikit-learn==1.8.0
+scipy==1.17.0
+sentence-transformers==5.2.3
 setuptools==82.0.0
 shellingham==1.5.4
 six==1.17.0
@@ -147,12 +154,15 @@ SQLAlchemy==2.0.46
 stack-data==0.6.3
 sympy==1.14.0
 tenacity==9.1.4
+threadpoolctl==3.6.0
 tiktoken==0.12.0
 tinytag==2.2.0
 tokenizers==0.22.2
 tomli==2.4.0
+torch==2.10.0
 tqdm==4.67.3
 traitlets==5.14.3
+transformers==5.2.0
 typer==0.24.0
 typer-slim==0.24.0
 typing-inspect==0.9.0
