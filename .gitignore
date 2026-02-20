@@ -55,5 +55,6 @@ data/*
 # Virtual environment
 /permit-pal
 
+permit-pal.code-workspace
 .env
 .vscode/
