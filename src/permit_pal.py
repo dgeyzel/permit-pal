@@ -23,7 +23,7 @@ async def main():
     parser.add_argument('--llm_model', type=str, required=True)
     parser.add_argument('--rag', action='store_true')
     args = parser.parse_args()
-    report.RAG_ENABLED = args.rag_enabled
+    report.RAG_ENABLED = args.rag
     output_table = await report.create_report(args.prompt, args.llm_model)
     print("Final Report Output:\n" + output_table)
 
