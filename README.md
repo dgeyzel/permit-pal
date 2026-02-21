@@ -82,13 +82,13 @@ Required arguments:
 
 Optional:
 
-- `--rag_enabled`: Enable RAG to augment the report with context from your document corpus
+- `--rag`: Enable RAG to augment the report with context from your document corpus
 
 Examples:
 
 ```bash
 python src/permit_pal.py --prompt "I want to open a restaurant in Atlanta, Georgia" --llm_model "gemini-2.5-pro"
-python src/permit_pal.py --prompt "I want to open a restaurant in Atlanta, Georgia" --llm_model "gemini-2.5-pro" --rag_enabled
+python src/permit_pal.py --prompt "I want to open a restaurant in Atlanta, Georgia" --llm_model "gemini-2.5-pro" --rag
 ```
 
 **Note**: Do not commit your `.env` file; it contains secrets.
