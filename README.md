@@ -46,6 +46,7 @@ This project is "demo quality".  It does not have any unit tests, minimal error 
    Edit `.env` and set `GOOGLE_API_KEY=<your-key>`.
 
 4. If using Ollama, install Ollama and pull the desired model (e.g., `ollama pull phi4-mini`).
+5. Add a folder called `data` in the project folder.  This is where files must go to be used for RAG.
 
 ## Running the Application
 
