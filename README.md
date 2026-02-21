@@ -104,6 +104,7 @@ permit-pal/
 │   ├── rel_check.py        # Relevancy check (is a document relevant to prompt?)
 │   └── permit_pal.py       # Optional CLI/test script (not used by production GUI)
 ├── assets/                 # Static assets (e.g., permit_pal_banner.png)
+├── data/                   # This directory MUST be present to use the RAG functionality
 ├── tests/                  # Test suite (pytest; add tests here per AGENTS.md)
 ├── .env.example            # Example env vars (copy to .env, do not commit .env)
 ├── requirements.txt        # Python dependencies
@@ -116,7 +117,7 @@ permit-pal/
 
 - **Environment variables**: The app uses `python-dotenv` to load variables from a `.env` file in the project root. Copy `.env.example` to `.env` and set at least `GOOGLE_API_KEY` if using Gemini.
 - **`.env`**: Never commit `.env`; it is for local secrets only.
-- **Ollama**: For local models, ensure Ollama is installed and the selected model is pulled.
+- **Ollama**: For local models, ensure Ollama is installed and the selected model is pulled.  Ollama is required for RAG functionality.
 
 ## How It Works
 
