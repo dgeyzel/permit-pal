@@ -46,18 +46,22 @@ This project is "demo quality".  It does not have any unit tests, minimal error 
    Edit `.env` and set `GOOGLE_API_KEY=<your-key>`.
 
 4. If using Ollama, install Ollama and pull the desired model (e.g., `ollama pull phi4-mini`).
-5. Add a folder called `data` in the project folder.  This is where files must go to be used for RAG.
+5. Add a directory called `data` in the project root directory.  This is where files must go to be used for RAG.
 
 ## Running the Application
 
+You can run Permit Pal either via the web GUI or from the command line.
+
+### Web GUI
+
 1. Open a terminal in the project directory and activate the virtual environment if needed.
-2. Run the web interface:
 
    ```bash
-   python -m src.gui
+   .venv\Scripts\activate   # Windows
+   # source .venv/bin/activate   # Linux/macOS
    ```
 
-   Or run the GUI module directly:
+2. Run the GUI module directly:
 
    ```bash
    python src/gui.py
@@ -66,6 +70,26 @@ This project is "demo quality".  It does not have any unit tests, minimal error 
 3. The app will start and display a message with the URL (e.g., `http://localhost:8080/` or similar, depending on NiceGUI defaults).
 4. Open your browser and go to the URL shown.
 5. To stop the server, press `Ctrl+C` in the terminal.
+
+### Command-line (CLI)
+
+You can run the application logic without the web GUI. Output is printed to the console.
+
+Required arguments:
+
+- `--prompt`: Your goal and location (e.g., "I want to open a restaurant in Atlanta, Georgia")
+- `--llm_model`: LLM model name (e.g., `gemini-2.5-pro` for Gemini, or an Ollama model name)
+
+Optional:
+
+- `--rag_enabled`: Enable RAG to augment the report with context from your document corpus
+
+Examples:
+
+```bash
+python src/permit_pal.py --prompt "I want to open a restaurant in Atlanta, Georgia" --llm_model "gemini-2.5-pro"
+python src/permit_pal.py --prompt "I want to open a restaurant in Atlanta, Georgia" --llm_model "gemini-2.5-pro" --rag_enabled
+```
 
 **Note**: Do not commit your `.env` file; it contains secrets.
 
@@ -97,12 +121,12 @@ This project is "demo quality".  It does not have any unit tests, minimal error 
 permit-pal/
 ├── src/                    # Source code
 │   ├── __init__.py         # Package initialization
-│   ├── gui.py              # NiceGUI web interface and main entry for the app
+│   ├── gui.py              # NiceGUI web interface to use the app
 │   ├── report.py           # Report generation (Gemini/Ollama, create_report)
-│   ├── rag_utils.py        # RAG: add_context, get_context, vector index, retrieval
+│   ├── rag_utils.py        # RAG: create context from the corpus in `./data`
 │   ├── conc_workflow.py    # Concurrent workflow for relevancy checking
 │   ├── rel_check.py        # Relevancy check (is a document relevant to prompt?)
-│   └── permit_pal.py       # Optional CLI/test script (not used by production GUI)
+│   └── permit_pal.py       # Run report logic from command line (no GUI)
 ├── assets/                 # Static assets (e.g., permit_pal_banner.png)
 ├── data/                   # This directory MUST be present to use the RAG functionality
 ├── tests/                  # Test suite (pytest; add tests here per AGENTS.md)
@@ -154,13 +178,7 @@ pip install pytest
 
 ### Running tests
 
-From the project root:
-
-```bash
-pytest
-```
-
-Or specify the tests directory:
+From the project root, run tests in the tests directory:
 
 ```bash
 pytest tests/

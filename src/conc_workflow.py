@@ -20,7 +20,7 @@ class ProcessEvent(Event):
 
 
 class ResultEvent(Event):
-    """Contains the combined context of all executed work.
+    """Contains the combined state of all executed work.
     Result is an output, the combined work from all the workers.
     """
     result: dict[str, str]
@@ -53,7 +53,7 @@ class ConcurrentWorkflow(Workflow):
 
     @step
     async def start(self, ctx: Context, ev: StartEvent) -> ProcessEvent:
-        """Creates the shared context store.
+        """Creates the shared state store.
         Gets a list of files in a directory.
         Sends each file to a ProcessEvent.
         """
@@ -91,7 +91,7 @@ class ConcurrentWorkflow(Workflow):
         ctx: Context,
         ev: ResultEvent
     ) -> StopEvent | None:
-        """Combines all of the results in the combined context.
+        """Combines all of the results in the combined state.
         The result is seperated into 2 lists of strings based on content.
         """
         num_to_collect = await ctx.store.get("num_to_collect")

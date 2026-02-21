@@ -1,30 +1,31 @@
 import asyncio
 import report
+import argparse
 
-"""This file is used to test the application logic \
+
+"""This file is used to run the application logic \
     without running the web GUI.
-It is not used in the production application.
+It takes input from the command line and runs the application logic.
+Output is printed to the console.
+Example usage:
+python permit_pal.py --prompt "I want to open a restaurant in Atlanta, Georgia" --llm_model "gemini-2.5-pro" --rag_enabled  # noqa: E501
+python permit_pal.py --prompt "I want to open a restaurant in Atlanta, Georgia" --llm_model "gemini-2.5-pro"  # noqa: E501
 """
-
-# List of test prompts
-TEST_PROMPT = [
-    'I want to open a restaurant in Atlanta, Georgia.',
-    'I want to open a restaurant in San Diego, CA.',
-    'I want to remodel a historic home in Atlanta, GA.',
-    'I want to become a barber in New York City, NY',
-    'I want to become a barber in Topeka, Kansas'
-]
-
-
-async def test_run(prompt: str, llm_model: str, rag_enabled):
-    """Function for doing tests of the application logic in main()
-    """
-    report.RAG_ENABLED = rag_enabled
-    output_table = await report.create_report(prompt, llm_model)
-    print("Final Report Output:\n" + output_table)
 
 
 async def main():
-    await test_run(TEST_PROMPT[1], report.LLM_MODEL[7], False)
+    """Main function for running the application logic in a CLI.
+    Takes the prompt, LLM model name, \
+        and RAG enabled flag as arguments from the command line.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--prompt', type=str, required=True)
+    parser.add_argument('--llm_model', type=str, required=True)
+    parser.add_argument('--rag_enabled', action='store_true')
+    args = parser.parse_args()
+    report.RAG_ENABLED = args.rag_enabled
+    output_table = await report.create_report(args.prompt, args.llm_model)
+    print("Final Report Output:\n" + output_table)
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

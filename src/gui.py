@@ -125,7 +125,8 @@ def create_page() -> None:
     """
     ui.add_css(PAGE_CSS)
 
-    # Zebra striping for markdown tables (use nicegui-markdown class per NiceGUI docs)
+    # Zebra striping for markdown tables
+    # (use nicegui-markdown class per NiceGUI docs)
     ui.add_head_html("""
         <style>
             .nicegui-markdown table tr:nth-child(even) td {
@@ -152,7 +153,7 @@ def create_page() -> None:
         prompt_input = ui.textarea(
             label="Describe what you want to accomplish and where",
             placeholder="I want to open a restaurant in Atlanta, Georgia.",
-        ).classes("w-full")
+        ).classes("w-full").props('input-style=height:30px')
 
         default_model: Optional[str] = (
             report.LLM_MODEL[0] if report.LLM_MODEL else None
