@@ -83,16 +83,30 @@ PAGE_CSS = """
     .permit-pal-page .q-toggle__label {
         color: #ffffff !important;
     }
-    .permit-pal-page .q-markdown {
+    .permit-pal-page .nicegui-markdown {
         color: rgba(255,255,255,0.95) !important;
     }
-    .permit-pal-page .q-markdown table {
+    .permit-pal-page .nicegui-markdown table {
         border-color: rgba(255,255,255,0.2) !important;
     }
-    .permit-pal-page .q-markdown th,
-    .permit-pal-page .q-markdown td {
+    .permit-pal-page .nicegui-markdown th,
+    .permit-pal-page .nicegui-markdown td {
         border-color: rgba(255,255,255,0.2) !important;
         color: #ffffff !important;
+    }
+    /* Alternating rows and header for markdown tables */
+    .permit-pal-page .nicegui-markdown table tr:nth-child(odd) td {
+        background: rgba(255,255,255,0.05) !important;
+    }
+    .permit-pal-page .nicegui-markdown table tr:nth-child(even) td {
+        background: rgba(255,255,255,0.02) !important;
+    }
+    /* Header only: thead row, or first tr when table has no thead (flat trs) */
+    .permit-pal-page .nicegui-markdown table thead tr th,
+    .permit-pal-page .nicegui-markdown table thead tr td,
+    .permit-pal-page .nicegui-markdown table > tr:first-child th,
+    .permit-pal-page .nicegui-markdown table > tr:first-child td {
+        background: #36384a !important;
     }
 """  # noqa: E501
 
@@ -110,6 +124,24 @@ def create_page() -> None:
       * Error display area for validation and runtime errors
     """
     ui.add_css(PAGE_CSS)
+
+    # Zebra striping for markdown tables (use nicegui-markdown class per NiceGUI docs)
+    ui.add_head_html("""
+        <style>
+            .nicegui-markdown table tr:nth-child(even) td {
+                background-color: rgba(255,255,255,0.02) !important;
+            }
+            .nicegui-markdown table tr:nth-child(odd) td {
+                background-color: rgba(255,255,255,0.05) !important;
+            }
+            .nicegui-markdown table thead tr th,
+            .nicegui-markdown table thead tr td,
+            .nicegui-markdown table > tr:first-child th,
+            .nicegui-markdown table > tr:first-child td {
+                background-color: #36384a !important;
+            }
+        </style>
+    """)
 
     with ui.column().classes("permit-pal-page"):
         with ui.element("div").classes("banner-wrapper"):
