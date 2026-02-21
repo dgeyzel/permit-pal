@@ -92,7 +92,7 @@ def get_ollama_llm(model='phi4-mini'):
     ollama_llm = Ollama(
         model=model,
         temperature=0.1,
-        max_tokens=1000,
+        max_tokens=200,
         context_window=8000,
         request_timeout=600
     )

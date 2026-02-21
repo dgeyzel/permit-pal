@@ -1,6 +1,10 @@
 import asyncio
 import report
 
+"""This file is used to test the application logic \
+    without running the web GUI.
+It is not used in the production application.
+"""
 
 # List of test prompts
 TEST_PROMPT = [
@@ -21,6 +25,6 @@ async def test_run(prompt: str, llm_model: str, rag_enabled):
 
 
 async def main():
-    await test_run(TEST_PROMPT[1], report.LLM_MODEL[4], True)
+    await test_run(TEST_PROMPT[1], report.LLM_MODEL[7], False)
 
 asyncio.run(main())

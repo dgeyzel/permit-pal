@@ -3,6 +3,8 @@ import time
 import rag_utils
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
+from llama_index.core.llms import ChatMessage
+from llama_index.llms.ollama import Ollama
 
 # Looks at the .env file in the same directory as this python file
 # Loads the API key defined in .env as an environment variable
@@ -31,7 +33,8 @@ As input, you will receive an action that a person wants to accomplish and a loc
 Determine all of licenses, permits, certifications, and other paperwork required to accomplish the action in the location.
 Include city, county, state, and federal requirements.  Include insurance requirements.
 Include any additional information that is available in CONTEXT.
-Structure the answer as a Markdown formatted table and do not return any other output except for the table.
+Structure the answer as a Markdown formatted table.
+DO NOT return any other output except for the Markdown formatted table.
 Make sure that the outputted table is formatted in valid Markdown. "|" must be used to seperate table cells, not "||".
 Column 1 is the needed permit, document, or action required.
 Column 2 is the organization, company, agency, office, bureau, or other entity for which the permit/document is required.
@@ -44,7 +47,8 @@ Column 7 is a link to the website for the item identified in Column 6.
 Here is an example of an input and output:
 Input: I want to open a restaurant in Atlanta, Georgia.
 Output:
-Document/Permit | Agency | Agency Link | Agency Type | Requirements | Regulatory Source | Regulatory Source Link
+**Document/Permit** | **Agency** | **Agency Link** | **Agency Type** | **Requirements** | **Regulatory Source** | **Regulatory Source Link**
+--- | --- | --- | --- | --- | --- | ---
 Zoning Verification |	Atlanta Office of Zoning and Development | https://www.atlantaga.gov/government/departments/city-planning/about-dcp/office-of-zoning-development | City | Verify the property is zoned for a restaurant before signing lease. | |
 Register Business | Georgia Secretary of State | https://sos.ga.gov/ | State | Requirements are available at https://sos.ga.gov/how-to-guide/how-guide-register-domestic-entity | Business Services Website | https://sos.ga.gov/corporations-division-georgia-secretary-states-office
 Employer Identification Number (EIN) | Internal Revenue Service (IRS) | https://www.irs.gov/businesses | Federal |	Establish a LLC or Corporation first | EIN webform | https://www.irs.gov/businesses/small-businesses-self-employed/get-an-employer-identification-number
@@ -102,6 +106,45 @@ async def gemini_report(input_prompt: str, gemini_model: str) -> str:
     return output_table
 
 
+async def ollama_report(input_prompt: str, ollama_model: str) -> str:
+    """Sends the input prompt to a local LLM model.
+    If RAG is enabled, calls add_context from rag_utils to \
+        get additional info from the RAG corpus.
+    Returns a string that contains the generated report formatted in Markdown.
+    """
+    additional_context = " "
+    if RAG_ENABLED:
+        additional_context = await rag_utils.add_context(input_prompt)
+
+    ollama_model = Ollama(
+        model=ollama_model,
+        temperature=0.1,
+        max_tokens=500,
+        context_window=8000,
+        request_timeout=600
+    )
+    messages = [
+        ChatMessage(
+            role="system",
+            content=SYSTEM_PROMPT.format(context=additional_context)
+        ),
+        ChatMessage(role="user", content=input_prompt)
+    ]
+    print(f"Starting main {ollama_model} model execution.")
+    start = time.perf_counter()
+    # Run blocking invoke in a thread so the event loop stays responsive
+    # (keeps NiceGUI WebSocket alive during long LLM calls).
+    ai_msg = await asyncio.to_thread(
+        ollama_model.chat,
+        messages=messages
+    )
+    end = time.perf_counter()
+    print(f"Main {ollama_model} model execution time : \
+        {end - start:.2f} seconds.")
+    output_table = ai_msg.message.content
+    return output_table
+
+
 async def create_report(input_prompt: str, model_name: str) -> str:
     """Wrapper for functions that generate the report.
     Different functions are called to use different LLMs \
@@ -110,4 +153,6 @@ async def create_report(input_prompt: str, model_name: str) -> str:
     output = ""
     if model_name.startswith('gemini'):
         output = await gemini_report(input_prompt, model_name)
+    else:
+        output = await ollama_report(input_prompt, model_name)
     return output
