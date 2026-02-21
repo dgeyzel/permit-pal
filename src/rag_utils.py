@@ -8,7 +8,7 @@ from llama_index.core import (
 )
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.ollama import Ollama
 
 
@@ -20,9 +20,13 @@ def get_context(filenames: [str], prompt: str, llm) -> str:
     documents = SimpleDirectoryReader(input_files=filenames).load_data()
     print("Starting document embedding into VectorStoreIndex.")
     start = time.perf_counter()
+    ollama_embedding = OllamaEmbedding(
+        model_name="embeddinggemma",
+        base_url="http://localhost:11434"
+    )
     index = VectorStoreIndex.from_documents(
         documents=documents,
-        embed_model=HuggingFaceEmbedding(model_name='thenlper/gte-small'),
+        embed_model=ollama_embedding
     )
     end = time.perf_counter()
     print(f"Embed Into VectorStoreIndex Execution Time :  \
@@ -84,7 +88,7 @@ async def add_context(prompt: str) -> str:
     return additional_context
 
 
-def get_ollama_llm(model='phi4-mini'):
+def get_ollama_llm(model='gemma3:1b'):
     """Helper function that returns an LLM model.
     Called in add_context.
     Passed into get_context. used in get_response_synthesizer.
