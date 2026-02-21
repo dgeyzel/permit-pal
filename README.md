@@ -1,4 +1,4 @@
-# Permit Pal
+![Picture of the project mascot](assets/permit_pal_mascot_small.png)
 
 A web-based application that helps you discover licenses, permits, certifications, and other paperwork required to accomplish a goal in a given location. Describe what you want to do and where (e.g., open a restaurant in Atlanta, become a barber in New York City), and Permit Pal uses an LLM to generate a structured report with agencies, links, requirements, and regulatory sources. Optional RAG (retrieval-augmented generation) can augment the report using your own document corpus.
 
