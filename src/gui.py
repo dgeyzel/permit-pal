@@ -18,14 +18,17 @@ PAGE_CSS = """
         width: 90%;
         max-width: 1200px;
         margin: 0 auto;
-        padding: 1.5rem;
+        padding: 0rem 1.5rem 1.5rem;
     }
     .permit-pal-page .banner-wrapper {
         width: 100%;
         height: 0;
         padding-bottom: 30%;
         position: relative;
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.1rem;
+    }
+    .permit-pal-page .prompt-field {
+        margin-bottom: 0.1rem;
         border-radius: 8px;
         overflow: visible;
     }
@@ -153,7 +156,7 @@ def create_page() -> None:
         prompt_input = ui.textarea(
             label="Describe what you want to accomplish and where",
             placeholder="I want to open a restaurant in Atlanta, Georgia.",
-        ).classes("w-full").props('input-style=height:30px')
+        ).classes("w-full prompt-field").props('input-style=height:30px')
 
         default_model: Optional[str] = (
             report.LLM_MODEL[0] if report.LLM_MODEL else None
@@ -164,13 +167,12 @@ def create_page() -> None:
             value=default_model,
         ).classes("w-full")
 
-        rag_toggle = ui.switch("Enable RAG", value=False)
+        with ui.row().classes("items-center gap-4"):
+            rag_toggle = ui.switch("Enable RAG", value=False)
+            generate_button = ui.button("Generate report")
+            generating_label = ui.label("").style("color: #9ca0b0")
 
         error_label = ui.label("").style("color: #e8a0b4")
-
-        generating_label = ui.label("").style("color: #9ca0b0")
-
-        generate_button = ui.button("Generate report")
 
         result_markdown = ui.markdown("")
 
