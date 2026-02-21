@@ -1,6 +1,7 @@
 import asyncio
 import report
 import argparse
+import time
 
 
 """This file is used to run the application logic \
@@ -24,7 +25,10 @@ async def main():
     parser.add_argument('--rag', action='store_true')
     args = parser.parse_args()
     report.RAG_ENABLED = args.rag
+    start = time.perf_counter()
     output_table = await report.create_report(args.prompt, args.llm_model)
+    end = time.perf_counter()
+    print(f"Total execution time: {end - start:.2f} seconds.")
     print("Final Report Output:\n" + output_table)
 
 if __name__ == "__main__":

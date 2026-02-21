@@ -31,6 +31,7 @@ def get_context(filenames: [str], prompt: str, llm) -> str:
     end = time.perf_counter()
     print(f"Embed Into VectorStoreIndex Execution Time :  \
         {end - start:.2f} seconds.")
+    print("--------------------------------")
     # Returning 5 chunks that have highest similarity score to the prompt
     # Keeping this number small to lower runtime for the demo
     retriever = VectorIndexRetriever(
@@ -53,6 +54,7 @@ def get_context(filenames: [str], prompt: str, llm) -> str:
     end = time.perf_counter()
     print(f"RetrieverQueryEngine execution Time :  \
         {end - start:.2f} seconds.")
+    print("--------------------------------")
     return str(response)
 
 
@@ -65,13 +67,27 @@ async def add_context(prompt: str) -> str:
             prompt=prompt,
             timeout=None
         )
+    print("--------------------------------")
     print("Starting execution of ConcurrentWorkflow.")
+    print("--------------------------------")
     start = time.perf_counter()
     result = await cwf.run()
     end = time.perf_counter()
-    print(f"Result of ConcurrentWorkflow = \n{result}")
+    print("--------------------------------")
     print(f"Elapsed runtime of ConcurrentWorkflow = \
         {end - start:.2f} seconds.")
+    print("--------------------------------")
+    print("\nResult of ConcurrentWorkflow\n")
+    print("List of relevant files:")
+    print("--------------------------------")
+    for file in result[0]:
+        print(file)
+    print("--------------------------------\n")
+    print("List of non-relevant files:")
+    print("--------------------------------")
+    for file in result[1]:
+        print(file)
+    print("--------------------------------\n")
 
     if result[0][0] != "No Relevant Results":
         # Run blocking get_context in a thread
@@ -84,11 +100,14 @@ async def add_context(prompt: str) -> str:
         )
     else:
         additional_context = " "
-    print(f"RAG loop results:\n {additional_context}")
+    print("RAG loop results:")
+    print("--------------------------------")
+    print(additional_context)
+    print("--------------------------------\n\n")
     return additional_context
 
 
-def get_ollama_llm(model='gemma3:1b'):
+def get_ollama_llm(model='phi4-mini'):
     """Helper function that returns an LLM model.
     Called in add_context.
     Passed into get_context. used in get_response_synthesizer.

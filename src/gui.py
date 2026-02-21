@@ -32,6 +32,10 @@ PAGE_CSS = """
         border-radius: 8px;
         overflow: visible;
     }
+    .permit-pal-page .model-select {
+        min-width: 140px;
+        max-width: 220px;
+    }
     .permit-pal-page .banner-wrapper .permit-pal-banner {
         position: absolute;
         top: 0;
@@ -161,13 +165,12 @@ def create_page() -> None:
         default_model: Optional[str] = (
             report.LLM_MODEL[0] if report.LLM_MODEL else None
         )
-        model_select = ui.select(
-            options=report.LLM_MODEL,
-            label="LLM model",
-            value=default_model,
-        ).classes("w-full")
-
-        with ui.row().classes("items-center gap-4"):
+        with ui.row().classes("items-center gap-4 wrap"):
+            model_select = ui.select(
+                options=report.LLM_MODEL,
+                label="LLM model",
+                value=default_model,
+            ).classes("model-select")
             rag_toggle = ui.switch("Enable RAG", value=False)
             generate_button = ui.button("Generate report")
             generating_label = ui.label("").style("color: #9ca0b0")
@@ -203,12 +206,13 @@ def create_page() -> None:
 
             try:
                 report.RAG_ENABLED = bool(rag_toggle.value)
+                print("\n--------------------------------")
                 print("Starting report generation from the UI.")
                 start = time.perf_counter()
                 output_table = await report.create_report(prompt, model)
                 end = time.perf_counter()
                 print(f"Report generation time from the UI: "
-                      f"{end - start:.2f} seconds.")
+                      f"{end - start:.2f} seconds.\n")
                 if not output_table:
                     error_label.text = "The model returned an empty response."
                     result_markdown.set_content("")

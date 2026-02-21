@@ -90,11 +90,14 @@ async def gemini_report(input_prompt: str, gemini_model: str) -> str:
         ("human", input_prompt)
     ]
     print(f"Starting main {gemini_model} model execution.")
+    print("--------------------------------")
     start = time.perf_counter()
     # Run blocking invoke in a thread so the event loop stays responsive
     # (keeps NiceGUI WebSocket alive during long LLM calls).
     ai_msg = await asyncio.to_thread(gemini_ai_model.invoke, messages)
     end = time.perf_counter()
+    print("--------------------------------")
+    print("--------------------------------")
     print(f"Main {gemini_model} model execution time : \
         {end - start:.2f} seconds.")
     output_table = ""
@@ -139,8 +142,12 @@ async def ollama_report(input_prompt: str, ollama_model: str) -> str:
         messages=messages
     )
     end = time.perf_counter()
+    print("--------------------------------")
+    print("--------------------------------")
     print(f"Main {ollama_model} model execution time : \
         {end - start:.2f} seconds.")
+    print("--------------------------------")
+    print("--------------------------------")
     output_table = ai_msg.message.content
     return output_table
 

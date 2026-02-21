@@ -64,9 +64,10 @@ class ConcurrentWorkflow(Workflow):
             ctx.send_event(
                 ProcessEvent(filename=item)
             )
+        print("--------------------------------")
         return None
 
-    @step(num_workers=2,
+    @step(num_workers=5,
           retry_policy=ConstantDelayRetryPolicy(delay=2, maximum_attempts=3)
           )
     async def process_data(self, ev: ProcessEvent) -> ResultEvent:

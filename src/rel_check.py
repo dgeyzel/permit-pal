@@ -13,8 +13,6 @@ async def rel_check(prompt: str, file_name: str) -> dict[str, str]:
        are relevant to the question in the input prompt.
        The prompt and file are sent to an LLM, which determines relevancy.
     """
-    MODEL = []
-    MODEL.append("gemini-3-flash-preview")
     SYSTEM_PROMPT = """
     You are an expert in government rules, codes, and regulations.  You will be given two inputs:
     1 - A document to examine.  This is the CONTEXT.
@@ -46,7 +44,7 @@ async def rel_check(prompt: str, file_name: str) -> dict[str, str]:
     filepath = pathlib.Path(file_name)
     client = genai.Client()
     response = await client.aio.models.generate_content(
-      model=MODEL[0],
+      model="gemini-3-flash-preview",
       contents=[
         types.Part.from_bytes(
             data=filepath.read_bytes(),
